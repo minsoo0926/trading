@@ -1,0 +1,2 @@
+Date,Open,High,Low,Close,Volume,OpenInterest
+2006-01-02,1789.36,1802.98,1789.36,1802.16,0.00,0.00
