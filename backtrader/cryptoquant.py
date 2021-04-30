@@ -9,15 +9,19 @@ import configparser
 from urllib.parse import urljoin 
 from pprint import pprint 
 from datetime import datetime, timedelta
+from utils import merge_price_signal, time_format_conversion
 
 config = configparser.ConfigParser()
 config.read('../config.ini')
 
 API_KEY = config['CRYPTOQUANT']['API_KEY']
 API_URL = config['CRYPTOQUANT']['API_URL']
+
 LIMIT = 100000 
+
 CQ_DATE_FORMAT = '%Y%m%dT%H%M%S'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
 
 
 headers = {'Authorization': 'Bearer ' + API_KEY}
@@ -131,3 +135,14 @@ def price_df(to, tick='min', limit=100):
     price = pd.DataFrame(price_usd).set_index('datetime')
     return(price.iloc[::-1])
 
+
+def get_price_coinbase_premium_df(limit=100, tick='min'):
+    coinbase = coinbase_premium_df(limit=limit)
+    new_date = time_format_conversion(coinbase.index[-1])
+    print(new_date)
+    price = price_df(to=new_date, limit=limit)
+
+    price.index = pd.to_datetime(price.index)
+    coinbase.index = pd.to_datetime(coinbase.index)
+
+    return(merge_price_signal(price, coinbase))

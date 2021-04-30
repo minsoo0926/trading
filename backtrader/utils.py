@@ -17,8 +17,8 @@ def group_mean(df, key):
     return(df.groupby(pd.Grouper(level='datetime', freq=key)).mean())
 
 # in_date: string type
-# return: datetime format 
-def time_conversion(in_date):
+# return: datetime format  from('%Y-%m-%d %H:%M:%S' ) ==> to('%Y%m%dT%H%M%S')
+def time_format_conversion(in_date):
     d = datetime.strptime(in_date, '%Y-%m-%d %H:%M:%S')
     return(d.strftime('%Y%m%dT%H%M%S'))
 
