@@ -23,7 +23,6 @@ CQ_DATE_FORMAT = '%Y%m%dT%H%M%S'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
-
 headers = {'Authorization': 'Bearer ' + API_KEY}
 
 
@@ -35,9 +34,16 @@ def datetime_to_str(datetime_obj, format):
     return(datetime.strftime(datetime_obj, format))
 
 
-# start, end: datetime_str 
+# start, end: datetime_str
+# tick: min, hour, day, block  
+# 
 def coinbase_premium_big_df(start=None, end=None, tick='min'):
-
+    '''
+    get data from cryptoquant from start date to end date
+    start: date start ('20200301T010000')
+    end: date end ('20210430T010000')
+    return: data as dataframe format 
+    '''
     data = []
 
     PATH = 'btc/market-data/coinbase-premium-index'
@@ -50,10 +56,10 @@ def coinbase_premium_big_df(start=None, end=None, tick='min'):
     while start_time < end_time:
         
         params = {
-            'window': 'min',
+            'window': tick,
             'from': start,
             'to': end, 
-            'limit': 100000,
+            'limit': LIMIT,
         }
 
         response = requests.get(URL, headers=headers, params=params).json()
@@ -82,10 +88,10 @@ def price_big_df(start=None, end=None, tick='min'):
     while start_time < end_time:
 
         params = {
-            'window': 'min',
+            'window': tick,
             'from': start,
             'to': end, 
-            'limit': 100000,
+            'limit': LIMIT,
         }
 
         response = requests.get(URL, headers=headers, params=params).json()
@@ -146,3 +152,13 @@ def get_price_coinbase_premium_df(limit=100, tick='min'):
     coinbase.index = pd.to_datetime(coinbase.index)
 
     return(merge_price_signal(price, coinbase))
+
+
+def get_price_coinbase_premium_big_df(start=None, end=None, tick='min'):
+    coinbase_df = coinbase_premium_big_df(start, end, tick)
+    price_df = price_big_df(start, end, tick)
+
+    price_df.index = pd.to_datetime(price_df.index)
+    coinbase_df.index = pd.to_datetime(coinbase_df.index)
+
+    return(merge_price_signal(price_df, coinbase_df))

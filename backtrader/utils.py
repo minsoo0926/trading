@@ -14,7 +14,47 @@ WIDTH = 1500
 
 
 def group_mean(df, key):
+    '''
+    grouping df by key (i.e. month=M, day=D) and return mean
+    df: input dataframe 
+    key: key to group 
+    return: means of each item grouped 
+    '''
+
     return(df.groupby(pd.Grouper(level='datetime', freq=key)).mean())
+
+
+# def subset_sum(df, offset):
+#     '''
+#     calculate subset sum starting from next position until offset
+
+#     '''
+#      return df_price['price_usd_close'].iloc[item.name+1: item.name+offset].mean() - item['price_usd_close']
+
+
+def one_day_from_df(df, date):
+    '''
+    extract one day data from dataframe
+    df: input dataframe
+    date: date to extract (i.e. 2020-04-1)
+    return: one day (date) data as dataframe
+    '''
+    return(df.loc[date])
+
+def mean_within_window(df, col, offset1=1, offset2=30):
+    '''
+    calculate mean of window (current, current + offset) items from dataframe
+    '''
+    # result = [df[col].iloc[row+offset1: row+offset2].mean() - df[col].iloc[row] for row in range(len(df))]
+    return([df[col].iloc[row+offset1: row+offset2].mean() - df[col].iloc[row] for row in range(len(df))])
+
+
+def mean_within_window_new(df, offset1=1, offset2=10):
+    '''
+    calculate mean of window (current, current + offset) items from dataframe
+    '''
+    # result = [df[col].iloc[row+offset1: row+offset2].mean() - df[col].iloc[row] for row in range(len(df))]
+    return([df.iloc[row+offset1: row+offset2].mean() - df.iloc[row] for row in range(len(df))])
 
 # in_date: string type
 # return: datetime format  from('%Y-%m-%d %H:%M:%S' ) ==> to('%Y%m%dT%H%M%S')
@@ -67,6 +107,19 @@ def multiline_graph_img(x, y1, y2, title=['y1', 'y2'], graph_mode='lines+markers
     fig.write_image('images/fig.png', engine='kaleido')
 
 
+
+def bar_graph_img(x, y,filename='images/fig.png'):
+    '''
+    draw bar graph image
+    input: 
+    return: image file (png)
+    '''
+    fig = make_subplots(rows=1, cols=1)
+    fig.add_trace(go.Bar(x, y))
+    fig.write_image(filename, engine='kaleido')
+
+
+
 def print_trade_analysis(analyzer):
     '''
     Function to print the Technical Analysis results in a nice format.
@@ -103,7 +156,7 @@ def print_sqn(analyzer):
     print('SQN: {}'.format(sqn))
 
 
-def outliers_removed(df):
+def outliers_removal(df):
     z_scores = zscore(df)
     abs_z_scores = np.abs(z_scores)
     filtered_entries = (abs_z_scores < 3).all(axis=1)
