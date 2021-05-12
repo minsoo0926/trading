@@ -268,6 +268,8 @@ class Test(bt.Strategy):
         self.index = self.datas[0].index
         self.close = self.datas[0].close  
         self.sma = btind.SimpleMovingAverage(self.datas[0].close, period=20)
+        self.ema = btind.ExponentialMovingAverage(self.datas[0].close, period=20)
+        self.rsi = btind.RSI_SMA(self.close, period=20)
         self.close_sma_diff = self.data.close - self.sma
         self.price_over_sma = self.close > self.sma 
         # self.premium = btalib.sma(self.datas.index)
@@ -275,10 +277,14 @@ class Test(bt.Strategy):
         self.buy_sig = bt.And(self.price_over_sma, self.close_sma_diff > 0)
         bt.LinePlotterIndicator(self.buy_sig, name='Buy Signal')
 
+        # print(f'init: item')
+        # for item in self.rsi:
+        #     print(item) 
+
 
     def next(self):
         # print('Data Feed: ', '(', self.gap[0], ')', self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.datas[0].close[0])
-        print(f'Feed - {self.datas[0].datetime.date(0)}, {self.datas[0].datetime.time(0)} ({self.gap[0]}): {self.datas[0].close[0]:.2f}, (s: {self.sma[0]:.2f} d: {self.close_sma_diff[0]:.2f} c: {self.price_over_sma[0]!s}  b: {self.buy_sig[0]})')
+        print(f'Feed - {self.datas[0].datetime.date(0)}, {self.datas[0].datetime.time(0)} ({self.gap[0]}): {self.datas[0].close[0]:.2f}, (s: {self.sma[0]:.2f} d: {self.close_sma_diff[0]:.2f} c: {self.price_over_sma[0]!s} e: {self.ema[0]:.2f}  b: {self.buy_sig[0]} r: {self.rsi[0]:.2f})')
 
         # print(f'position: {self.position.size}, gap: {self.gap[0]}')
         # if not self.position:

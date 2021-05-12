@@ -11,7 +11,27 @@ import numpy as np
 
 HEIGHT = 1000
 WIDTH = 1500
+coinbase_datetime_format = '%Y-%m-%dT%H:%M:%S'
 
+
+def dt_to_str(dt, format):
+    return(dt.strftime(format))
+
+
+def ts_to_dt(ts, tzinfo='korea'):     
+    # ts_binance_size = 13
+
+    # KST = datetime.timezone(datetime.timedelta(hours=9))
+    if tzinfo == 'binance':
+        return(datetime.utcfromtimestamp(float(ts)/1000)) 
+    elif tzinfo == 'coinbase':
+        return(datetime.utcfromtimestamp(float(ts)))
+    elif tzinfo == 'korea':
+        return(datetime.fromtimestamp(float(ts)))
+
+
+def binance_ts_to_dt(time):
+    return(datetime.utcfromtimestamp(float(time)/1000))
 
 def group_mean(df, key):
     '''
@@ -161,3 +181,10 @@ def outliers_removal(df):
     abs_z_scores = np.abs(z_scores)
     filtered_entries = (abs_z_scores < 3).all(axis=1)
     return(df[filtered_entries])
+
+# remove first element and add last 
+def shift_n_and_add_one(df, n, item):
+    tmp_df = df.shift(-n)
+    tmp_df[-1] = item
+    return(tmp_df) 
+    
