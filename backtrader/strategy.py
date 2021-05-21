@@ -270,7 +270,7 @@ class Test(bt.Strategy):
         self.sma = btind.SimpleMovingAverage(self.datas[0].close, period=20)
         self.ema = btind.ExponentialMovingAverage(self.datas[0].close, period=20)
         self.rsi = btind.RSI_SMA(self.close, period=20)
-        self.close_sma_diff = self.data.close - self.sma
+        self.close_sma_diff = self.close - self.sma
         self.price_over_sma = self.close > self.sma 
         # self.premium = btalib.sma(self.datas.index)
         # print(self.gap[0])
@@ -284,7 +284,7 @@ class Test(bt.Strategy):
 
     def next(self):
         # print('Data Feed: ', '(', self.gap[0], ')', self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.datas[0].close[0])
-        print(f'Feed - {self.datas[0].datetime.date(0)}, {self.datas[0].datetime.time(0)} ({self.gap[0]}): {self.datas[0].close[0]:.2f}, (s: {self.sma[0]:.2f} d: {self.close_sma_diff[0]:.2f} c: {self.price_over_sma[0]!s} e: {self.ema[0]:.2f}  b: {self.buy_sig[0]} r: {self.rsi[0]:.2f})')
+        print(f'Feed - {self.datas[0].datetime.date(0)}, {self.datas[0].datetime.time(0)} ({self.gap[0]}): {self.close[0]:.2f}, (s: {self.sma[0]:.2f} d: {self.close_sma_diff[0]:.2f} c: {self.price_over_sma[0]!s} e: {self.ema[0]:.2f}  b: {self.buy_sig[0]} r: {self.rsi[0]:.2f})')
 
         # print(f'position: {self.position.size}, gap: {self.gap[0]}')
         # if not self.position:
@@ -338,16 +338,26 @@ class Test(bt.Strategy):
 
 
         # # SECOND STRATEGY
+        # if not self.position:
+        #     if (self.gap[-1] > HIGH_GAP and increasing(self.gap[0] + self.datas[0].close[0], self.gap[-1] + self.datas[0].close[-1]) and increasing(self.gap[0], self.gap[-1])):
+        #         self.buy(size=size)
+        #         print(f'BUY ORDER:( {self.gap[0]})')
+
+
+        # else:
+        #     if  (self.gap[-1] < LOW_GAP and decreasing(self.gap[0] + self.datas[0].close[0], self.gap[-1] + self.datas[0].close[-1]) and decreasing(self.gap[0], self.gap[-1])):
+        #             self.sell(size=size)
+        #             print(f'SELL ORDER:( {self.gap[0]})')
         if not self.position:
-            if (self.gap[-1] > HIGH_GAP and increasing(self.gap[0] + self.datas[0].close[0], self.gap[-1] + self.datas[0].close[-1]) and increasing(self.gap[0], self.gap[-1])):
+            if (self.gap[-1] > HIGH_GAP):
                 self.buy(size=size)
-                print(f'BUY ORDER:( {self.gap[0]})')
+                print(f'BUY ORDER:(current gap: {self.gap[0]} - gap at buy: {self.gap[-1]})')
 
 
         else:
-            if  (self.gap[-1] < LOW_GAP and decreasing(self.gap[0] + self.datas[0].close[0], self.gap[-1] + self.datas[0].close[-1]) and decreasing(self.gap[0], self.gap[-1])):
+            if  (self.gap[-1] < LOW_GAP):
                     self.sell(size=size)
-                    print(f'SELL ORDER:( {self.gap[0]})')
+                    print(f'SELL ORDER:(current gap: {self.gap[0]} - gap at sell: {self.gap[-1]})')
 
         # if self.price_over_sma == True:
         #     print('True')

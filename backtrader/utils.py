@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import pandas as pd 
 import plotly.express as px
 import plotly.graph_objects as go 
@@ -8,10 +8,97 @@ import numpy as np
 # import matplotlib.image as mpimg
 # import matplotlib.pyplot as plt
 # from IPython.display import Image
+import configparser
+import json
+import requests
+import ccxt
+import time
+from pprint import pprint 
+from urllib.parse import urljoin 
 
-HEIGHT = 1000
-WIDTH = 1500
-coinbase_datetime_format = '%Y-%m-%dT%H:%M:%S'
+
+config = configparser.ConfigParser()
+config.read('../config.ini')
+
+
+BINANCE_SYMBOL = 'BTC/USDT'
+COPRO_SYMBOL = 'BTC/USD'
+
+COPRO_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+DEFAULT_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S' # format for general datetime params. 
+
+# BINANCE_COLUMNS = ['time', 'open', 'high', 'low', 'close', 'volume']
+# COPRO_COLUMNS  = ['time', 'low', 'high', 'open', 'close', 'volume']
+COLUMNS  = ['datetime', 'open', 'high', 'low', 'close', 'volume']
+
+BINANCE_API_KEY = config['BINANCE']['API_KEY']
+BINANCE_SECRET_KEY = config['BINANCE']['SECRET_KEY']
+BINANCE_API_URL = config['BINANCE']['API_URL']
+
+COPRO_API_KEY = config['COINBASE']['API_KEY']
+COPRO_SECRET_KEY = config['COINBASE']['SECRET_KEY']
+COPRO_API_URL = config['COINBASE']['API_URL']
+
+
+
+# HEIGHT = 1000
+# WIDTH = 1500
+
+
+def num_tick(timeframe):
+    msec = 1000
+    minute = 60 * msec
+    hour = 60 *minute
+    day = 24 * hour
+
+    if timeframe == '1m':
+        tick = minute
+    elif timeframe == '1h':
+        tick = hour
+    elif timeframe == '1d':
+        tick = day 
+
+    return(tick)
+
+
+
+def ohlcv_df(symbol, exchange, timeframe, since=None):
+
+    tick = num_tick(timeframe)
+
+    data = []
+    now_timestamp = exchange.milliseconds()
+    since_timestamp = exchange.parse8601(since)
+
+    print(f'Data fetching: from {exchange.iso8601(since_timestamp)} - to {exchange.iso8601(now_timestamp)}')
+
+    if (since_timestamp == None or since_timestamp > now_timestamp):
+        print('Fetching from: ', exchange.iso8601(since_timestamp))
+        data = exchange.fetch_ohlcv(symbol, timeframe)
+        print('Fetching finished')  
+        return(data)
+
+
+    while since_timestamp < now_timestamp: 
+        print('Fetching from: ', exchange.iso8601(since_timestamp))
+        candles = exchange.fetch_ohlcv(symbol, timeframe, since=since_timestamp)
+        since_timestamp = candles[-1][0] + tick 
+        data += candles
+
+    print('Fetching finished')
+
+    df = pd.DataFrame(data, columns=COLUMNS)
+    df.datetime = pd.to_datetime(df.datetime, unit='ms')
+    df.set_index('datetime', inplace=True)
+
+    # df = pd.DataFrame(data, columns=COLUMNS).set_index('datetime')
+    # df.index = pd.to_pydatetime(df.index, DEFAULT_DATETIME_FORMAT)
+    return(df)
+
+
+def ohlcv_print(exchange, data):
+    return [(exchange.iso8601(ts), c) for ts, o, h, l, c, v in data]  
+    
 
 
 def dt_to_str(dt, format):
@@ -87,57 +174,6 @@ def time_format_conversion(in_date):
 # merge two dataframes into one for data feeding 
 def merge_price_signal(price, signal):
     return(pd.merge(price, signal, left_index=True, right_index=True))
-
-
-def line_graph(x, y, title='y', graph_mode='lines+markers', height=HEIGHT, width=WIDTH):
-    fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(go.Scatter(x=x, y=y, mode=graph_mode, name=title))
-
-    fig.update_layout(height=height, width=width)
-    fig.show()
-
-
-def line_graph_img(x, y, title='y', graph_mode='lines+markers', height=HEIGHT, width=WIDTH):
-    fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(go.Scatter(x=x, y=y, mode=graph_mode, name=title))
-
-    fig.update_layout(height=height, width=width)
-    fig.write_image('images/fig.png', engine='kaleido')
-    # # img = mpimg.imread('images/fig.png')
-    # Image(filename='images/fig.png')
-    # # plt.imshow(img)
-
-
-# graph_mode: lines, markers 
-def multiline_graph(x, y1, y2, title=['y1', 'y2'], graph_mode='lines+markers', height=HEIGHT, width=WIDTH):
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.add_trace(go.Scatter(x=x, y=y1, mode=graph_mode, name=title[0]), secondary_y=False)
-    fig.add_trace(go.Scatter(x=x, y=y2, mode=graph_mode, name=title[1]), secondary_y=True)
-
-    fig.update_layout(height=height, width=width)
-    fig.show()
-
-
-def multiline_graph_img(x, y1, y2, title=['y1', 'y2'], graph_mode='lines+markers', height=HEIGHT, width=WIDTH):
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.add_trace(go.Scatter(x=x, y=y1, mode=graph_mode, name=title[0]), secondary_y=False)
-    fig.add_trace(go.Scatter(x=x, y=y2, mode=graph_mode, name=title[1]), secondary_y=True)
-
-    fig.update_layout(height=height, width=width)
-    fig.write_image('images/fig.png', engine='kaleido')
-
-
-
-def bar_graph_img(x, y,filename='images/fig.png'):
-    '''
-    draw bar graph image
-    input: 
-    return: image file (png)
-    '''
-    fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(go.Bar(x, y))
-    fig.write_image(filename, engine='kaleido')
-
 
 
 def print_trade_analysis(analyzer):

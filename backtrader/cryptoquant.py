@@ -27,10 +27,16 @@ headers = {'Authorization': 'Bearer ' + API_KEY}
 
 
 def str_to_datetime(date_str, format):
+    '''
+    change str date to datetime using format parameter  
+    '''
     return(datetime.strptime(date_str, format))
 
 
 def datetime_to_str(datetime_obj, format):
+    '''
+    change datetime  to str date using format parameter  
+    '''
     return(datetime.strftime(datetime_obj, format))
 
 
@@ -155,10 +161,20 @@ def get_price_coinbase_premium_df(limit=100, tick='min'):
 
 
 def get_price_coinbase_premium_big_df(start=None, end=None, tick='min'):
+    '''
+    get price & coinbase premium data from cryptoquant from start date to end date
+    start: date start ('20200301T010000')
+    end: date end ('20210430T010000')
+    return: data as dataframe format 
+    '''
+
+    # get the data (start - end) from cryptoquant
     coinbase_df = coinbase_premium_big_df(start, end, tick)
     price_df = price_big_df(start, end, tick)
 
+    # set the index as datetime format 
     price_df.index = pd.to_datetime(price_df.index)
     coinbase_df.index = pd.to_datetime(coinbase_df.index)
 
+    # merge two data using index as a key and return 
     return(merge_price_signal(price_df, coinbase_df))
