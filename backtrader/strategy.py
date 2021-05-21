@@ -144,19 +144,20 @@ class RSI(bt.Strategy):
     )
 
     def __init__(self):
-        self.dataclose = self.datas[0].close
-        self.rsi = btind.RSI_SMA(self.data.close, period=10)
+        self.close = self.datas[0].close
+        self.rsi = btind.RSI_SMA(self.close, period=21)
 
     def next(self):
         if not self.position:
             if self.rsi < 30:
                 self.buy(size=size)
-                cost_profit = self.dataclose[0] * size
-                print('BUY:(', self.rsi[0], ')', self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.dataclose[0], 'cost (profit): ', cost_profit)
+                # cost_profit = self.close[0] * size
+                print('BUY:(', self.rsi[0], ')', self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.close[0], 'cost (profit): ')
         else:
             if self.rsi > 70:
                 self.sell(size=size)
-                print('SELL:(', self.rsi[0], ')', self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.datas[0].close[0], 'cost (profit): ', cost_profit)
+                # cost_profit = self.close[0] * size
+                print('SELL:(', self.rsi[0], ')', self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.close[0], 'cost (profit): ')
     
     def log(self, txt, dt=None):
         print(txt, dt)
