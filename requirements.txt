@@ -106,6 +106,7 @@ scikit-learn==0.24.1
 scipy==1.6.2
 Send2Trash==1.5.0
 service-identity==18.1.0
+six==1.16.0
 sortedcontainers==2.3.0
 TA-Lib==0.4.19
 tardis-client==1.2.11
