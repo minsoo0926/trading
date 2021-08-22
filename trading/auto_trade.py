@@ -28,7 +28,7 @@ def date_from_timestamp(timestamp):
 
 
 config = configparser.ConfigParser()
-config.read('/root/trading/config.ini')
+config.read('/data/data/com.termux/files/home/crypto/config.ini')
 
 API_KEY = config['BINANCE']['API_KEY']
 SECRET_KEY = config['BINANCE']['SECRET_KEY']
@@ -73,9 +73,9 @@ async def hour():
     
     data_1h = ccxt_utils.fetch_ohlcv(BINANCE_SYMBOL, binance, timeframe='1h', start=since, end=None)
     data_1h_df = ccxt_utils.ohlcv_to_df(data_1h['data'])
-    data_1h_df.to_csv('/root/trading/trading/data/temp.csv')
+    data_1h_df.to_csv('/data/data/com.termux/files/home/crypto/trading/data/temp.csv')
     
-    data_1h_df=pd.read_csv('/root/trading/trading/data/temp.csv').reset_index(drop=True)
+    data_1h_df=pd.read_csv('/data/data/com.termux/files/home/crypto/trading/data/temp.csv').reset_index(drop=True)
     data=data.reset_index(drop=True)
     total=pd.concat([data, data_1h_df[1:]], ignore_index=True)
 
@@ -83,7 +83,7 @@ async def hour():
     trend=trend_utils.trend(d)
     data=total
     total=total.set_index('datetime',append=False)
-    total.to_csv('/root/trading/trading/data/20200101-binance-1h.csv')
+    total.to_csv('/data/data/com.termux/files/home/crypto/trading/data/20200101-binance-1h.csv')
     await asyncio.sleep(3600)
     
     
@@ -105,7 +105,7 @@ async def minute():
         log.append([time.ctime(), 'buy', '-'])
         temp_position='buy'
         record=pd.DataFrame(log)
-        record.to_csv("/root/trading/trading/data/trading.csv", mode='a')
+        record.to_csv("/data/data/com.termux/files/home/crypto/trading/data/trading.csv", mode='a')
     elif position == 'sell' and not temp_position=='sell':
         
         if market.get_USDTbalance()<10:
@@ -114,7 +114,7 @@ async def minute():
         log.append([time.ctime(), 'sell', market.get_USDTbalance()])
         temp_position='sell'
         record=pd.DataFrame(log)
-        record.to_csv("/root/trading/trading/data/trading.csv", mode='a')
+        record.to_csv("/data/data/com.termux/files/home/crypto/trading/data/trading.csv", mode='a')
     
     await asyncio.sleep(60)
 
@@ -131,7 +131,7 @@ async def main():
     global temp_position
     await asyncio.gather(min_loop(), hour_loop())
 
-data=pd.read_csv('/root/trading/trading/data/20200101-binance-1h.csv').reset_index(drop=True)
+data=pd.read_csv('/data/data/com.termux/files/home/crypto/trading/data/20200101-binance-1h.csv').reset_index(drop=True)
 trend=trend_utils.trend(data[len(data)-80:len(data)].reset_index(drop=True))
 temp_position='start'
 
