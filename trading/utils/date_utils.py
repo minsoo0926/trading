@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import time
 
 DEFAULT_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -29,9 +30,10 @@ def datetime_to_utctimestamp(datetime_obj):
     '''
     convert datetime (utc) to timestamp (utc)  
     ''' 
-
     return(datetime_obj.replace(tzinfo=timezone.utc).timestamp())
 
+def str_to_utctimestamp(date_str):
+    return time.mktime(datetime.strptime(date_str, DEFAULT_DATETIME_FORMAT).timetuple())
 
 def utctimestamp_to_datetime(timestamp):
     '''

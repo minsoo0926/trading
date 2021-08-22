@@ -10,6 +10,9 @@ from .date_utils import validate_dateformat
 
 COLUMNS  = ['datetime', 'open', 'high', 'low', 'close', 'volume']
 
+# merge two dataframes into one for data feeding 
+def merge_price_signal(price, signal):
+    return(pd.merge(price, signal, left_index=True, right_index=True))
 
 def num_of_ticks(timeframe):
     """
