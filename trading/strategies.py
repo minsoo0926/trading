@@ -1,3 +1,5 @@
+from mine import  market
+import backtrader as bt
 import pandas as pd
 from utils import date_utils
 import numpy as np
@@ -36,13 +38,11 @@ class trend:
         max=local_max(data, start, end)
         min=local_min(data, start, end)
         d=[]
-        for x, y in zip(data['datetime'], data['close']):
+        for x, y in zip(data['datetime'][0:100], data['close'][0:100]):
             d.append([date_utils.str_to_utctimestamp(x), y])
         df=pd.DataFrame(data=d, columns=['datetime', 'close'])
-        original_start=df.index[(df['datetime']==max['datetime'][0])].tolist()[0]
-        original_end=df.index[(df['datetime']==max['datetime'][len(max)-1])].tolist()[0]
-        df=df[original_start:original_end].reset_index(drop=True)
-        plt.plot(df['datetime'], df['close'], 'k')
+        #d=data[int(data.index(data['datetime']==max['datetime'][0])):int(data.index(data['datetime']==max['datetime'][len(max)-1]))]
+        #plt.plot(df['datetime'], df['close'], 'k')
 
         plt.plot(max['datetime'], max['high'], 'r')
         plt.plot(min['datetime'], min['low'], 'y')
@@ -60,8 +60,9 @@ class trend:
 def local_max(data, start, end):
     max_pts=[]
     time=[]
+    if 
     for i in range(start, end-4):
-        if data['high'][i]<data['high'][i+2] and data['high'][i+1]<data['high'][i+2] and data['high'][i+3]<data['high'][i+2] and data['high'][i+4]<data['high'][i+2]:
+        if data[i].high<data[i+2].high and data[i+1].high<data[i+2].high and data[i+3].high<data[i+2].high and data[i+4].high<data[i+2].high:
             max_pts.append([date_utils.str_to_utctimestamp(data['datetime'][i+2]),data['high'][i+2]])
     columns=['datetime', 'high']
     df=pd.DataFrame(data=max_pts, columns=columns)
@@ -71,8 +72,22 @@ def local_min(data, start, end):
     min_pts=[]
     time=[]
     for i in range(start, end-4):
-        if data['low'][i]<data['low'][i+2] and data['low'][i+1]<data['low'][i+2] and data['low'][i+3]<data['low'][i+2] and data['low'][i+4]<data['low'][i+2]:
+        if data[i].low<data[i+2].low and data[i+1].low<data[i+2].low and data[i+3].low<data[i+2].low and data[i+4].low<data[i+2].low:
             min_pts.append([date_utils.str_to_utctimestamp(data['datetime'][i+2]),data['low'][i+2]])
     columns=['datetime', 'low']
     df=pd.DataFrame(data=min_pts, columns=columns)
     return df
+
+class trend_strategy(bt.Strategy):
+    def __init__(self):
+        self.datas=self.datas[]
+        self.trend=trend(self.datas)
+        self.positon='start'
+    def next(self, data):
+        self.data=self.data[1:].reset_index()
+        if position == 'buy' and not temp=='buy':
+            self.order=self.buy()
+            self.position='buy'
+        elif position == 'sell' and not temp=='sell':
+            self.order=self.sell()
+            self.position='sell'

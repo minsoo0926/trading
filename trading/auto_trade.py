@@ -61,7 +61,7 @@ binance=ccxt.binance({
 
 nest_asyncio.apply()
 
-BINANCE_SYMBOL = 'BTC/USDT'
+BINANCE_SYMBOL = 'ETH/USDT'
 
 
 async def hour():
@@ -83,7 +83,7 @@ async def hour():
     trend=trend_utils.trend(d)
     data=total
     total=total.set_index('datetime',append=False)
-    total.to_csv('/root/trading/trading/data/20200101-binance-1h.csv')
+    total.to_csv('/root/trading/trading/data/20200101-ETH.csv')
     await asyncio.sleep(3600)
     
     
@@ -95,26 +95,26 @@ async def minute():
     
     log=[]
     d=data[len(data)-80:len(data)]
-    temp_price= binance.fetch_ticker('BTC/USDT')['close']
+    temp_price= binance.fetch_ticker('ETH/USDT')['close']
     position=trend.near_trend(temp_price)
     if position == 'buy' and not temp_position=='buy':
         
         if market.get_USDTbalance()>=10:
-            order = binance.create_market_buy_order('BTC/USDT', market.get_USDTbalance())
+            order = binance.create_market_buy_order('ETH/USDT', market.get_USDTbalance())
         
         log.append([time.ctime(), 'buy', '-'])
         temp_position='buy'
         record=pd.DataFrame(log)
-        record.to_csv("/root/trading/trading/data/trading.csv", mode='a')
+        record.to_csv("/root/trading/trading/data/trading.csv",columns=['datetime', 'position', 'amount'], mode='a')
     elif position == 'sell' and not temp_position=='sell':
         
         if market.get_USDTbalance()<10:
-            order = binance.create_market_sell_order('BTC/USDT', market.get_BTCbalance())
+            order = binance.create_market_sell_order('ETH/USDT', market.get_ETHbalance())
         
         log.append([time.ctime(), 'sell', market.get_USDTbalance()])
         temp_position='sell'
         record=pd.DataFrame(log)
-        record.to_csv("/root/trading/trading/data/trading.csv", mode='a')
+        record.to_csv("/root/trading/trading/data/trading.csv",columns=['datetime', 'position', 'amount'], mode='a')
     
     await asyncio.sleep(60)
 
@@ -131,9 +131,10 @@ async def main():
     global temp_position
     await asyncio.gather(min_loop(), hour_loop())
 
-data=pd.read_csv('/root/trading/trading/data/20200101-binance-1h.csv').reset_index(drop=True)
+data=pd.read_csv('/root/trading/trading/data/20200101-ETH.csv').reset_index(drop=True)
 trend=trend_utils.trend(data[len(data)-80:len(data)].reset_index(drop=True))
-temp_position='start'
+log=pd.read_csv('/root/trading/trading/data/trading.csv')
+temp_position=log['position'][len(log)-1]
 
 loop=asyncio.get_event_loop()
 try:

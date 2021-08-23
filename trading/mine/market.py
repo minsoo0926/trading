@@ -26,3 +26,12 @@ def get_USDTbalance():
     })
     balance=binance.fetch_balance()
     return (balance['USDT']['free'])
+
+def get_ETHbalance():
+    #잔고보기
+    binance=ccxt.binance({
+        'apiKey' : 'iGZ7SwwhHZ02IGg3pYTJGR7dTYHu6T8kIiCVnsDYRreUDTjg6fkTocFi4uHmcv0R',
+        'secret' : 'iZot0U2sE7vpZ8AyIp4sBsJrwqib3SVmmSntu4JDnPlEflPXov3qCofcpOQuKwxW',
+    })
+    balance=binance.fetch_balance()
+    return (balance['ETH']['free'])
