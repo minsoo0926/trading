@@ -14,7 +14,7 @@ def get_BTCbalance():
         'apiKey' : 'iGZ7SwwhHZ02IGg3pYTJGR7dTYHu6T8kIiCVnsDYRreUDTjg6fkTocFi4uHmcv0R',
         'secret' : 'iZot0U2sE7vpZ8AyIp4sBsJrwqib3SVmmSntu4JDnPlEflPXov3qCofcpOQuKwxW',
     })
-    balance=binance.fetch_balance()
+    balance=binance.fetch_balance({'recvWindow': 10000000})
     return (balance['BTC']['free'])
     
     
@@ -24,7 +24,7 @@ def get_USDTbalance():
         'apiKey' : 'iGZ7SwwhHZ02IGg3pYTJGR7dTYHu6T8kIiCVnsDYRreUDTjg6fkTocFi4uHmcv0R',
         'secret' : 'iZot0U2sE7vpZ8AyIp4sBsJrwqib3SVmmSntu4JDnPlEflPXov3qCofcpOQuKwxW',
     })
-    balance=binance.fetch_balance()
+    balance=binance.fetch_balance({'recvWindow': 10000000})
     return (balance['USDT']['free'])
 
 def get_ETHbalance():
@@ -33,5 +33,5 @@ def get_ETHbalance():
         'apiKey' : 'iGZ7SwwhHZ02IGg3pYTJGR7dTYHu6T8kIiCVnsDYRreUDTjg6fkTocFi4uHmcv0R',
         'secret' : 'iZot0U2sE7vpZ8AyIp4sBsJrwqib3SVmmSntu4JDnPlEflPXov3qCofcpOQuKwxW',
     })
-    balance=binance.fetch_balance()
+    balance=binance.fetch_balance({'recvWindow': 10000000})
     return (balance['ETH']['free'])
