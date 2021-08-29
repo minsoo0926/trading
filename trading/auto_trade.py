@@ -85,7 +85,7 @@ async def hour():
     data=total
     total=total.set_index('datetime',append=False)
     total.to_csv('/root/trading/trading/data/20200101-ETH.csv')
-    await asyncio.sleep(3600)
+    await asyncio.sleep(600)
     
     
 async def minute():
