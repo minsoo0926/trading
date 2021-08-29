@@ -63,6 +63,7 @@ def local_max(data, start, end):
     for i in range(start, end-4):
         if data['high'][i]<data['high'][i+2] and data['high'][i+1]<data['high'][i+2] and data['high'][i+3]<data['high'][i+2] and data['high'][i+4]<data['high'][i+2]:
             max_pts.append([date_utils.str_to_utctimestamp(data['datetime'][i+2]),data['high'][i+2]])
+    max_pts.append([date_utils.str_to_utctimestamp(data['datetime'][end-1]),data['high'][end-1]])
     columns=['datetime', 'high']
     df=pd.DataFrame(data=max_pts, columns=columns)
     return df
@@ -71,8 +72,9 @@ def local_min(data, start, end):
     min_pts=[]
     time=[]
     for i in range(start, end-4):
-        if data['low'][i]<data['low'][i+2] and data['low'][i+1]<data['low'][i+2] and data['low'][i+3]<data['low'][i+2] and data['low'][i+4]<data['low'][i+2]:
+        if data['low'][i]>data['low'][i+2] and data['low'][i+1]>data['low'][i+2] and data['low'][i+3]>data['low'][i+2] and data['low'][i+4]>data['low'][i+2]:
             min_pts.append([date_utils.str_to_utctimestamp(data['datetime'][i+2]),data['low'][i+2]])
+    min_pts.append([date_utils.str_to_utctimestamp(data['datetime'][end-1]),data['low'][end-1]])
     columns=['datetime', 'low']
     df=pd.DataFrame(data=min_pts, columns=columns)
     return df

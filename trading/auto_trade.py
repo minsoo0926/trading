@@ -33,18 +33,6 @@ config.read('/root/trading/config.ini')
 API_KEY = config['BINANCE']['API_KEY']
 SECRET_KEY = config['BINANCE']['SECRET_KEY']
 API_URL = config['BINANCE']['API_URL']
-'''
-client = Client(API_KEY, SECRET_KEY)
-
-for i in range(1, 10):
-    local_time1 = int(time.time() * 1000)
-    server_time = client.get_server_time()
-    diff1 = server_time['serverTime'] - local_time1
-    local_time2 = int(time.time() * 1000)
-    diff2 = local_time2 - server_time['serverTime']
-    print("local1: %s server:%s local2: %s diff1:%s diff2:%s" % (local_time1, server_time['serverTime'], local_time2, diff1, diff2))
-    time.sleep(2)
-'''
 
 exchange_id = 'binance'
 exchange = ccxt.binance({
@@ -78,7 +66,9 @@ async def hour():
     global trend
     global data
     print('hour')
+    f=open('/root/trading/trading/data/log.txt', 'a')
     f.write(time.ctime()+' running...\n')
+    f.close()
     since = data['datetime'][len(data)-1]
     since_timestamp = binance.parse8601(since)
     
@@ -109,14 +99,16 @@ async def minute():
     temp_price= binance.fetch_ticker('ETH/USDT')['close']
     position=trend.near_trend(temp_price)
     if position == 'buy' and not temp_position=='buy':
+        if market.get_BNBbalance()>=0.03:
+            order= binance.create_market_sell_order('BNB/USDT', market.get_BNBbalance())
         
         if market.get_USDTbalance()>=10:
             order = binance.create_market_buy_order('ETH/USDT', market.get_USDTbalance()/binance.fetch_ticker('ETH/USDT')['high'])
         
         log.append([time.ctime(), 'buy', '-'])
         temp_position='buy'
-        record=pd.DataFrame(log)
-        record.to_csv("/root/trading/trading/data/trading.csv",columns=['datetime', 'position', 'amount'], mode='a')
+        record=pd.DataFrame(log, columns=['datetime','position','amount'])
+        record.to_csv("/root/trading/trading/data/trading.csv", mode="a")
     elif position == 'sell' and not temp_position=='sell':
         
         if market.get_USDTbalance()<10:
@@ -124,8 +116,8 @@ async def minute():
         
         log.append([time.ctime(), 'sell', market.get_USDTbalance()])
         temp_position='sell'
-        record=pd.DataFrame(log)
-        record.to_csv("/root/trading/trading/data/trading.csv",columns=['datetime', 'position', 'amount'], mode='a')
+        record=pd.DataFrame(log, columns=['datetime','position','amount'])
+        record.to_csv("/root/trading/trading/data/trading.csv", mode="a")
     
     await asyncio.sleep(60)
 
@@ -144,10 +136,8 @@ async def main():
 
 data=pd.read_csv('/root/trading/trading/data/20200101-ETH.csv').reset_index(drop=True)
 trend=trend_utils.trend(data[len(data)-80:len(data)].reset_index(drop=True))
-log=pd.read_csv('/root/trading/trading/data/trading.csv')
+log=pd.read_csv('/root/trading/trading/data/trading.csv', delimiter=',')
 temp_position=log['position'][len(log)-1]
-f=open('/root/trading/trading/data/log.txt', 'a')
-
 
 loop=asyncio.get_event_loop()
 try:
@@ -155,3 +145,8 @@ try:
 except KeyboardInterrupt:
     print('end')
 loop.close()
+
+f=open('/root/trading/trading/data/log.txt', 'a')
+f.write(time.ctime()+' end\n')
+f.close()
+ 

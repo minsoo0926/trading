@@ -1,2 +1,10 @@
 ,datetime,position,amount
 0,Sun Aug 22 20:34:15 2021,buy,-
+,datetime,position,amount
+0,Wed Aug 25 14:33:18 2021,sell,279.92718079
+,datetime,position,amount
+0,Sat Aug 28 11:48:33 2021,buy,-
+,datetime,position,amount
+0,Sat Aug 28 21:36:24 2021,sell,480.93037721
+,datetime,position,amount
+0,Sat Aug 28 21:40:49 2021,buy,-
