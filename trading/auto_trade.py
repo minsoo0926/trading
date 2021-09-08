@@ -98,10 +98,14 @@ async def minute():
     d=data[len(data)-80:len(data)]
     temp_price= binance.fetch_ticker('ETH/USDT')['close']
     position=trend.near_trend(temp_price)
-    if position == 'buy' and not temp_position=='buy':
-        if market.get_BNBbalance()>=0.03:
+    #자꾸 bnb코인으로 자동전환되는 현상 고침
+    if market.get_BNBbalance()>=0.03:
+        if temp_position=='buy':
+            order= binance.create_market_sell_order('BNB/ETH', market.get_BNBbalance())
+        elif temp_position=='sell':
             order= binance.create_market_sell_order('BNB/USDT', market.get_BNBbalance())
-        
+
+    if position == 'buy' and not temp_position=='buy':
         if market.get_USDTbalance()>=10:
             order = binance.create_market_buy_order('ETH/USDT', market.get_USDTbalance()/binance.fetch_ticker('ETH/USDT')['high'])
         

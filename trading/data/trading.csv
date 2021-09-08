@@ -8,3 +8,15 @@
 0,Sat Aug 28 21:36:24 2021,sell,480.93037721
 ,datetime,position,amount
 0,Sat Aug 28 21:40:49 2021,buy,-
+,datetime,position,amount
+0,Mon Aug 30 23:48:25 2021,sell,471.24643077
+,datetime,position,amount
+0,Tue Aug 31 05:13:22 2021,buy,-
+,datetime,position,amount
+0,Tue Aug 31 08:12:51 2021,sell,264.1378439
+,datetime,position,amount
+0,Tue Aug 31 17:14:22 2021,buy,-
+,datetime,position,amount
+0,Thu Sep  2 01:59:41 2021,sell,294.34805136
+,datetime,position,amount
+0,Thu Sep  2 02:01:02 2021,buy,-

@@ -87,8 +87,5 @@ def get_ETHbalance_future():
         }
     })
     balance=binance.fetch_balance()
-    try: 
-        amount=balance['ETH']['free']
-    except KeyError:
-        amount=0
+    amount=3*balance['USDT']['used']/binance.fetch_ticker('ETH/USDT')['close']
     return amount

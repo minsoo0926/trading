@@ -48,7 +48,7 @@ binance=ccxt.binance({
 markets = binance.load_markets()
 symbol = "ETH/USDT"
 m = binance.market(symbol)
-leverage = 2
+leverage = 3
 
 resp = binance.fapiPrivate_post_leverage({
     'symbol': m['id'],
@@ -96,21 +96,51 @@ async def minute():
     d=data[len(data)-80:len(data)]
     temp_price= binance.fetch_ticker('ETH/USDT')['close']
     position=trend.near_trend(temp_price)
-    if position == 'buy' and not temp_position=='buy':
-        if market.get_USDTbalance_future()>=5:
-            order = binance.create_market_buy_order('ETH/USDT', market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
+
+    if position=='buy' and temp_position=='none':
+        if market.get_USDTbalance_future()>=30:
+            order = binance.create_market_buy_order('ETH/USDT', 3*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
+        log.append([time.ctime(), 'buy', '-'])
+        temp_position='buy'
+        record=pd.DataFrame(log, columns=['datetime','position','amount'])
+        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")    
+    
+    elif position == 'sell' and temp_position=='none':
+        if market.get_USDTbalance_future()>=30:
+            order = binance.create_market_sell_order('ETH/USDT', 3*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
+        
+        log.append([time.ctime(), 'sell', market.get_USDTbalance_future()])
+        temp_position='sell'
+        record=pd.DataFrame(log, columns=['datetime','position','amount'])
+        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        
+    elif position == 'buy' and temp_position=='sell':
+        order = binance.create_market_buy_order('ETH/USDT', 2*market.get_ETHbalance_future())
         
         log.append([time.ctime(), 'buy', '-'])
         temp_position='buy'
         record=pd.DataFrame(log, columns=['datetime','position','amount'])
         record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-    elif position == 'sell' and not temp_position=='sell':
-        
-        if market.get_USDTbalance_future()<5:
-            order = binance.create_market_sell_order('ETH/USDT', market.get_ETHbalance_future())
+    elif position == 'sell' and temp_position=='buy':
+        order = binance.create_market_sell_order('ETH/USDT', 2*market.get_ETHbalance_future())
         
         log.append([time.ctime(), 'sell', market.get_USDTbalance_future()])
         temp_position='sell'
+        record=pd.DataFrame(log, columns=['datetime','position','amount'])
+        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+    
+    elif position == 'none' and temp_position=='sell':
+        order = binance.create_market_buy_order('ETH/USDT', market.get_ETHbalance_future())
+        
+        log.append([time.ctime(), 'none', '-'])
+        temp_position='none'
+        record=pd.DataFrame(log, columns=['datetime','position','amount'])
+        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+    elif position == 'none' and temp_position=='buy':
+        order = binance.create_market_sell_order('ETH/USDT', market.get_ETHbalance_future())
+        
+        log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
+        temp_position='none'
         record=pd.DataFrame(log, columns=['datetime','position','amount'])
         record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
     
@@ -128,7 +158,7 @@ async def main():
     global trend
     global temp_position
     await asyncio.gather(min_loop(), hour_loop())
-
+    
 data=pd.read_csv('/root/trading/trading/data/20200101-ETH_future.csv').reset_index(drop=True)
 trend=trend_utils.trend(data[len(data)-80:len(data)].reset_index(drop=True))
 log=pd.read_csv('/root/trading/trading/data/trading_future.csv', delimiter=',')
@@ -144,4 +174,3 @@ loop.close()
 f=open('/root/trading/trading/data/log_future.txt', 'a')
 f.write(time.ctime()+' end\n')
 f.close()
- 

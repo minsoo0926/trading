@@ -22,7 +22,7 @@ API_URL = config['BINANCE']['API_URL']
 
 client = Client(API_KEY, SECRET_KEY)
 
-for i in range(1, 10):
+while True:
     local_time1 = int(time.time() * 1000)
     server_time = client.get_server_time()
     diff1 = server_time['serverTime'] - local_time1
