@@ -5,8 +5,21 @@ import matplotlib.pyplot as plt
 import time
 
 class trend:
+    '''
+    #test용
+    def __init__(self, data, size):
+        end = size
+        start= 0
+        max=local_max(data, start, end)
+        min=local_min(data, start, end)
+        
+        z_max=np.polyfit(max['datetime'], max['high'],1)
+        self.f_max=np.poly1d(z_max)
+        z_min=np.polyfit(min['datetime'], min['low'],1)
+        self.f_min=np.poly1d(z_min)
+    '''
     def __init__(self, data):
-        end = 80
+        end = 34
         start= 0
         max=local_max(data, start, end)
         min=local_min(data, start, end)
@@ -17,12 +30,27 @@ class trend:
         self.f_min=np.poly1d(z_min)
 
     def direction(self):
+        #rising
         if self.f_max[1]>0 and self.f_min[1]>0:
             return 'up'
+
+        #descending
         elif self.f_max[1]<0 and self.f_min[1]<0:
-            return 'down'
+            return 'down'            
+        
+        #converge
+        elif self.f_max[1]<self.f_min[1]:
+            return 'none'
         else:
             return 'none'
+
+        #descending wedge
+#        elif self.f_max[1]<self.f_min[1] and self.f_min[1]<0:
+ #           return 'down'
+
+        #rising wedge
+  #      elif self.f_max[1]<self.f_min[1] and self.f_max[1]>0:
+   #         return 'up'
 
     def near_trend(self, temp_price):
         if temp_price<(1.07)*self.f_min(time.time()) and self.direction()=='up':

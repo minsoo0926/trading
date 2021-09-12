@@ -8,7 +8,7 @@ import time
 
 class trend:
     def __init__(self, data):
-        end = 80
+        end = 34
         start= 0
         max=local_max(data, start, end)
         min=local_min(data, start, end)
@@ -19,15 +19,19 @@ class trend:
         self.f_min=np.poly1d(z_min)
 
     def direction(self):
+        #rising
         if self.f_max[1]>0 and self.f_min[1]>0:
             return 'up'
+        #descending
         elif self.f_max[1]<0 and self.f_min[1]<0:
             return 'down'
+        else:
+            return 'none'
 
     def near_trend(self, temp_price):
-        if temp_price<(1.07)*self.f_min(time.time()) and self.direction()=='up':
+        if temp_price<(1.01)*self.f_min(time.time()) and self.direction()=='up':
             return 'buy'
-        elif temp_price>(0.93)*self.f_max(time.time()) or self.direction()=='down':
+        elif temp_price>(0.99)*self.f_max(time.time()) or self.direction()=='down':
             return 'sell'
         else : 
             return 'none'   
@@ -60,10 +64,9 @@ class trend:
 def local_max(data, start, end):
     max_pts=[]
     time=[]
-    if 
     for i in range(start, end-4):
-        if data[i].high<data[i+2].high and data[i+1].high<data[i+2].high and data[i+3].high<data[i+2].high and data[i+4].high<data[i+2].high:
-            max_pts.append([date_utils.str_to_utctimestamp(data['datetime'][i+2]),data['high'][i+2]])
+        if data['high'][i]<data['high'][i+2] and data['high'][i+1]<data['high'][i+2] and data['high'][i+3]<data['high'][i+2] and data['high'][i+4]<data['high'][i+2]:
+            max_pts.append([data.datetime[i+2],data.high[i+2]])
     columns=['datetime', 'high']
     df=pd.DataFrame(data=max_pts, columns=columns)
     return df
@@ -72,22 +75,39 @@ def local_min(data, start, end):
     min_pts=[]
     time=[]
     for i in range(start, end-4):
-        if data[i].low<data[i+2].low and data[i+1].low<data[i+2].low and data[i+3].low<data[i+2].low and data[i+4].low<data[i+2].low:
-            min_pts.append([date_utils.str_to_utctimestamp(data['datetime'][i+2]),data['low'][i+2]])
+        if data['low'][i]>data['low'][i+2] and data['low'][i+1]>data['low'][i+2] and data['low'][i+3]>data['low'][i+2] and data['low'][i+4]>data['low'][i+2]:
+            min_pts.append([data.datetime[i+2],data.low[i+2]])
     columns=['datetime', 'low']
     df=pd.DataFrame(data=min_pts, columns=columns)
     return df
 
 class trend_strategy(bt.Strategy):
     def __init__(self):
-        self.datas=self.datas[]
-        self.trend=trend(self.datas)
-        self.positon='start'
-    def next(self, data):
-        self.data=self.data[1:].reset_index()
-        if position == 'buy' and not temp=='buy':
-            self.order=self.buy()
-            self.position='buy'
-        elif position == 'sell' and not temp=='sell':
-            self.order=self.sell()
-            self.position='sell'
+        datas=[]
+        columns=['datetime', 'high', 'low']
+        self.date=self.data.datetime
+        self.high=self.data.high
+        self.low=self.data.low
+        self._close = self.data.close
+        for i in range(-34, 0):
+            datas.append([self.date[i], self.high[i], self.low[i]])
+        datas=pd.DataFrame(columns=columns, data=datas)        
+        self.trend=trend(datas)
+        
+    def next(self):
+        datas=[]
+        columns=['datetime', 'high', 'low']
+        for i in range(-34, 0):
+            datas.append([self.date[i], self.high[i], self.low[i]])
+        datas=pd.DataFrame(columns=columns, data=datas)  
+        self.trend=trend(datas)
+
+        position=self.trend.near_trend(self._close[0])
+        if not self.position:
+            if position == 'buy':
+                self.order=self.buy()
+            elif position == 'sell':
+                self.order=self.sell()
+        else:
+            if position=='none':
+                self.close()

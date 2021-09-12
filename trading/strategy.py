@@ -66,7 +66,7 @@ class PrintData(bt.Strategy):
     def next(self):
         # print('open:', self.data.open[0], 'high:', self.data.high[0], 'low:', self.data.low[0], 'close:', self.data.close[0])
         # print(self.datas[0].datetime.date(0), self.datas[0].datetime.time(0),  'open:', self.datas[0].open[0], 'high:', self.datas[0].high[0], 'low:', self.datas[0].low[0], 'close:', self.datas[0].close[0])
-        print(self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.datas[0].gap[0], self.datas[0].index[0])
+        print(self.datas[0].datetime.date(0), self.datas[0].datetime.time(0), self.datas[0].index[0])
 
 
 # class PrintClose(bt.Strategy):

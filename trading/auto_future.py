@@ -78,7 +78,7 @@ async def hour():
     data=data.reset_index(drop=True)
     total=pd.concat([data, data_1h_df[1:]], ignore_index=True)
 
-    d=total[len(data)-80:len(data)].reset_index(drop=True)
+    d=total[len(data)-34:len(data)].reset_index(drop=True)
     trend=trend_utils.trend(d)
     data=total
     total=total.set_index('datetime',append=False)
@@ -93,7 +93,7 @@ async def minute():
     global temp_position
     
     log=[]
-    d=data[len(data)-80:len(data)]
+    d=data[len(data)-34:len(data)]
     temp_price= binance.fetch_ticker('ETH/USDT')['close']
     position=trend.near_trend(temp_price)
 
@@ -109,7 +109,7 @@ async def minute():
         if market.get_USDTbalance_future()>=30:
             order = binance.create_market_sell_order('ETH/USDT', 3*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
         
-        log.append([time.ctime(), 'sell', market.get_USDTbalance_future()])
+        log.append([time.ctime(), 'sell', '-'])
         temp_position='sell'
         record=pd.DataFrame(log, columns=['datetime','position','amount'])
         record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
@@ -124,7 +124,7 @@ async def minute():
     elif position == 'sell' and temp_position=='buy':
         order = binance.create_market_sell_order('ETH/USDT', 2*market.get_ETHbalance_future())
         
-        log.append([time.ctime(), 'sell', market.get_USDTbalance_future()])
+        log.append([time.ctime(), 'sell', '-'])
         temp_position='sell'
         record=pd.DataFrame(log, columns=['datetime','position','amount'])
         record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
@@ -132,7 +132,7 @@ async def minute():
     elif position == 'none' and temp_position=='sell':
         order = binance.create_market_buy_order('ETH/USDT', market.get_ETHbalance_future())
         
-        log.append([time.ctime(), 'none', '-'])
+        log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
         temp_position='none'
         record=pd.DataFrame(log, columns=['datetime','position','amount'])
         record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
@@ -160,7 +160,7 @@ async def main():
     await asyncio.gather(min_loop(), hour_loop())
     
 data=pd.read_csv('/root/trading/trading/data/20200101-ETH_future.csv').reset_index(drop=True)
-trend=trend_utils.trend(data[len(data)-80:len(data)].reset_index(drop=True))
+trend=trend_utils.trend(data[len(data)-34:len(data)].reset_index(drop=True))
 log=pd.read_csv('/root/trading/trading/data/trading_future.csv', delimiter=',')
 temp_position=log['position'][len(log)-1]
 
