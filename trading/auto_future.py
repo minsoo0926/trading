@@ -48,7 +48,7 @@ binance=ccxt.binance({
 markets = binance.load_markets()
 symbol = "ETH/USDT"
 m = binance.market(symbol)
-leverage = 3
+leverage = 5
 
 resp = binance.fapiPrivate_post_leverage({
     'symbol': m['id'],
@@ -99,7 +99,7 @@ async def minute():
 
     if position=='buy' and temp_position=='none':
         if market.get_USDTbalance_future()>=30:
-            order = binance.create_market_buy_order('ETH/USDT', 3*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
+            order = binance.create_market_buy_order('ETH/USDT', 5*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
         log.append([time.ctime(), 'buy', '-'])
         temp_position='buy'
         record=pd.DataFrame(log, columns=['datetime','position','amount'])
@@ -107,7 +107,7 @@ async def minute():
     
     elif position == 'sell' and temp_position=='none':
         if market.get_USDTbalance_future()>=30:
-            order = binance.create_market_sell_order('ETH/USDT', 3*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
+            order = binance.create_market_sell_order('ETH/USDT', 5*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
         
         log.append([time.ctime(), 'sell', '-'])
         temp_position='sell'

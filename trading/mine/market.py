@@ -87,5 +87,5 @@ def get_ETHbalance_future():
         }
     })
     balance=binance.fetch_balance()
-    amount=3*balance['USDT']['used']/binance.fetch_ticker('ETH/USDT')['close']
+    amount=5*balance['USDT']['used']/binance.fetch_ticker('ETH/USDT')['close']
     return amount
