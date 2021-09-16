@@ -98,52 +98,62 @@ async def minute():
     position=trend.near_trend(temp_price)
 
     if position=='buy' and temp_position=='none':
-        if market.get_USDTbalance_future()>=30:
+        try:
             order = binance.create_market_buy_order('ETH/USDT', 5*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
-        log.append([time.ctime(), 'buy', '-'])
-        temp_position='buy'
-        record=pd.DataFrame(log, columns=['datetime','position','amount'])
-        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")    
-    
+            log.append([time.ctime(), 'buy', '-'])
+            temp_position='buy'
+            record=pd.DataFrame(log, columns=['datetime','position','amount'])
+            record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")    
+        except ccxt.base.errors.InsufficientFunds:
+            print('insufficient margin')
+
     elif position == 'sell' and temp_position=='none':
-        if market.get_USDTbalance_future()>=30:
+        try:
             order = binance.create_market_sell_order('ETH/USDT', 5*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
-        
-        log.append([time.ctime(), 'sell', '-'])
-        temp_position='sell'
-        record=pd.DataFrame(log, columns=['datetime','position','amount'])
-        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-        
+            log.append([time.ctime(), 'sell', '-'])
+            temp_position='sell'
+            record=pd.DataFrame(log, columns=['datetime','position','amount'])
+            record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        except ccxt.base.errors.InsufficientFunds:
+            print('insufficient margin')
     elif position == 'buy' and temp_position=='sell':
-        order = binance.create_market_buy_order('ETH/USDT', 2*market.get_ETHbalance_future())
-        
-        log.append([time.ctime(), 'buy', '-'])
-        temp_position='buy'
-        record=pd.DataFrame(log, columns=['datetime','position','amount'])
-        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        try:
+            order = binance.create_market_buy_order('ETH/USDT', 2*market.get_ETHbalance_future())   
+            log.append([time.ctime(), 'buy', '-'])
+            temp_position='buy'
+            record=pd.DataFrame(log, columns=['datetime','position','amount'])
+            record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        except ccxt.base.errors.InsufficientFunds:
+            print('insufficient margin')
     elif position == 'sell' and temp_position=='buy':
-        order = binance.create_market_sell_order('ETH/USDT', 2*market.get_ETHbalance_future())
-        
-        log.append([time.ctime(), 'sell', '-'])
-        temp_position='sell'
-        record=pd.DataFrame(log, columns=['datetime','position','amount'])
-        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-    
+        try:    
+            order = binance.create_market_sell_order('ETH/USDT', 2*market.get_ETHbalance_future()) 
+            log.append([time.ctime(), 'sell', '-'])
+            temp_position='sell'
+            record=pd.DataFrame(log, columns=['datetime','position','amount'])
+            record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        except ccxt.base.errors.InsufficientFunds:
+            print('insufficient margin')
     elif position == 'none' and temp_position=='sell':
-        order = binance.create_market_buy_order('ETH/USDT', market.get_ETHbalance_future())
-        
-        log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
-        temp_position='none'
-        record=pd.DataFrame(log, columns=['datetime','position','amount'])
-        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        try:
+            order = binance.create_market_buy_order('ETH/USDT', market.get_ETHbalance_future())
+            
+            log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
+            temp_position='none'
+            record=pd.DataFrame(log, columns=['datetime','position','amount'])
+            record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        except ccxt.base.errors.InsufficientFunds:
+            print('insufficient margin')
     elif position == 'none' and temp_position=='buy':
-        order = binance.create_market_sell_order('ETH/USDT', market.get_ETHbalance_future())
-        
-        log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
-        temp_position='none'
-        record=pd.DataFrame(log, columns=['datetime','position','amount'])
-        record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-    
+        try:
+            order = binance.create_market_sell_order('ETH/USDT', market.get_ETHbalance_future())
+            
+            log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
+            temp_position='none'
+            record=pd.DataFrame(log, columns=['datetime','position','amount'])
+            record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
+        except ccxt.base.errors.InsufficientFunds:
+            print('insufficient margin')
     await asyncio.sleep(60)
 
 async def min_loop():
