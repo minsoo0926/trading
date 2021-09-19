@@ -94,7 +94,14 @@ async def minute():
     
     log=[]
     d=data[len(data)-34:len(data)]
-    temp_price= binance.fetch_ticker('ETH/USDT')['close']
+    try:
+        temp_price= binance.fetch_ticker('ETH/USDT')['close']
+    except:
+        print('error')
+        f=open('/root/trading/trading/data/log_future.txt', 'a')
+        f.write(time.ctime()+' error!!!\n')
+        f.close()
+
     position=trend.near_trend(temp_price)
 
     if position=='buy' and temp_position=='none':
@@ -106,7 +113,6 @@ async def minute():
             record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")    
         except ccxt.base.errors.InsufficientFunds:
             print('insufficient margin')
-
     elif position == 'sell' and temp_position=='none':
         try:
             order = binance.create_market_sell_order('ETH/USDT', 5*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
