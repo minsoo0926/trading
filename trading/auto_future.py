@@ -101,6 +101,7 @@ async def minute():
         f=open('/root/trading/trading/data/log_future.txt', 'a')
         f.write(time.ctime()+' error!!!\n')
         f.close()
+        return
 
     position=trend.near_trend(temp_price)
 
