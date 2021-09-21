@@ -188,3 +188,5 @@
 0,Wed Sep 22 00:04:03 2021,none,1202.82422865
 ,datetime,position,amount
 0,Wed Sep 22 00:06:24 2021,sell,-
+,datetime,position,amount
+0,Wed Sep 22 01:12:47 2021,none,1144.11360533
