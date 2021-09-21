@@ -63,7 +63,6 @@ BINANCE_SYMBOL = 'ETH/USDT'
 async def hour():
     global trend
     global data
-    print('hour')
     f=open('/root/trading/trading/data/log_future.txt', 'a')
     f.write(time.ctime()+' running...\n')
     f.close()
@@ -87,7 +86,6 @@ async def hour():
     
     
 async def minute():
-    print('minute')
     global data
     global trend
     global temp_position
@@ -97,7 +95,7 @@ async def minute():
     try:
         temp_price= binance.fetch_ticker('ETH/USDT')['close']
     except:
-        print('error')
+        print(time.ctime()+'error!!!')
         f=open('/root/trading/trading/data/log_future.txt', 'a')
         f.write(time.ctime()+' error!!!\n')
         f.close()
