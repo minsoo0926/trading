@@ -28,10 +28,10 @@ class trend:
         else:
             return 'none'
 
-    def near_trend(self, temp_price):
-        if temp_price<(1.01)*self.f_min(time.time()) and self.direction()=='up':
+    def near_trend(self, temp_price, datetime):
+        if temp_price<(1.01)*self.f_min(datetime) and self.direction()=='up':
             return 'buy'
-        elif temp_price>(0.99)*self.f_max(time.time()) or self.direction()=='down':
+        elif temp_price>(0.99)*self.f_max(datetime) or self.direction()=='down':
             return 'sell'
         else : 
             return 'none'   
@@ -63,7 +63,6 @@ class trend:
 
 def local_max(data, start, end):
     max_pts=[]
-    time=[]
     for i in range(start, end-4):
         if data['high'][i]<data['high'][i+2] and data['high'][i+1]<data['high'][i+2] and data['high'][i+3]<data['high'][i+2] and data['high'][i+4]<data['high'][i+2]:
             max_pts.append([data.datetime[i+2],data.high[i+2]])
@@ -73,7 +72,6 @@ def local_max(data, start, end):
 
 def local_min(data, start, end):
     min_pts=[]
-    time=[]
     for i in range(start, end-4):
         if data['low'][i]>data['low'][i+2] and data['low'][i+1]>data['low'][i+2] and data['low'][i+3]>data['low'][i+2] and data['low'][i+4]>data['low'][i+2]:
             min_pts.append([data.datetime[i+2],data.low[i+2]])
@@ -102,7 +100,7 @@ class trend_strategy(bt.Strategy):
         datas=pd.DataFrame(columns=columns, data=datas)  
         self.trend=trend(datas)
 
-        position=self.trend.near_trend(self._close[0])
+        position=self.trend.near_trend(self._close[0], self.date[0])
         if not self.position:
             if position == 'buy':
                 self.order=self.buy()

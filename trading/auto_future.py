@@ -103,7 +103,7 @@ async def minute():
         f.close()
         return
 
-    position=trend.near_trend(temp_price)
+    position=trend.near_trend(temp_price, time.time())
 
     if position=='buy' and temp_position=='none':
         try:
@@ -174,7 +174,7 @@ async def main():
     global data
     global trend
     global temp_position
-    await asyncio.gather(min_loop(), hour_loop())
+    await asyncio.gather(hour_loop())
     
 data=pd.read_csv('/root/trading/trading/data/20200101-ETH_future.csv').reset_index(drop=True)
 trend=trend_utils.trend(data[len(data)-34:len(data)].reset_index(drop=True))
