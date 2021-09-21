@@ -85,6 +85,7 @@ class trend:
         for x in max['datetime']:
             y_min.append(self.f_min(x))
         plt.plot(max['datetime'], y_min, 'b')
+        plt.savefig('graph.png')
 
 
 def local_max(data, start, end):
