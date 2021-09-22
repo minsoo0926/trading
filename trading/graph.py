@@ -11,6 +11,6 @@ binance = ccxt.binance()
 eth = binance.fetch_ticker("ETH/USDT")
 
 a = trend_utils.trend(df1[len(df1)-34:].reset_index(drop=True))
-print(a.near_trend(eth['close']))
+print(a.near_trend(eth['close']), a.direction(),a.f_max(time.time()), a.f_min(time.time()))
 a.graph(df1)
 

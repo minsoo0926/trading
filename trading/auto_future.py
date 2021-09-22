@@ -48,7 +48,7 @@ binance=ccxt.binance({
 markets = binance.load_markets()
 symbol = "ETH/USDT"
 m = binance.market(symbol)
-leverage = 5
+leverage = 10
 
 resp = binance.fapiPrivate_post_leverage({
     'symbol': m['id'],

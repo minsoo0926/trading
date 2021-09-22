@@ -33,9 +33,9 @@ class trend:
 
 
     def near_trend(self, temp_price):
-        if temp_price<(1.01)*self.f_min(time.time()) and self.direction()=='up':
+        if (0.99)*self.f_min(time.time())<temp_price<(1.01)*self.f_min(time.time()) and self.direction()=='up':
             return 'buy'
-        elif temp_price>(0.99)*self.f_max(time.time()) and self.direction()=='down':
+        elif (1.01)*self.f_max(time.time())>temp_price>(0.99)*self.f_max(time.time()) and self.direction()=='down':
             return 'sell'
         else : 
             return 'none'   
