@@ -61,14 +61,14 @@ class trend:
       #      return 'none'   
 
     def near_trend(self, temp_price, datetime):
-        if temp_price<(1.01)*self.f_min(datetime) and self.direction()=='up':
+        if 0.95*self.f_min(datetime)<temp_price<self.f_min(datetime)*(1.01) and self.direction()=='up':
             return 'buy'
-        elif temp_price>(0.99)*self.f_max(datetime) and self.direction()=='down':
+        elif 1.05*self.f_max(datetime)>temp_price>self.f_max(datetime)*(0.99) and self.direction()=='down':
             return 'sell'
         else : 
             return 'none'
     def graph(self, data):
-        end=len(data)-1
+        end=len(data)
         start=end-50 
         max=local_max(data, start, end)
         min=local_min(data, start, end)
@@ -92,6 +92,7 @@ class trend:
         for x in max['datetime']:
             y_min.append(self.f_min(x))
         plt.plot(max['datetime'], y_min, 'b')
+        plt.savefig('graph.png')
 
 
 def local_max(data, start, end):

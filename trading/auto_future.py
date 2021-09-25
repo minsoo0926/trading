@@ -48,12 +48,6 @@ binance=ccxt.binance({
 markets = binance.load_markets()
 symbol = "ETH/USDT"
 m = binance.market(symbol)
-leverage = 5
-
-resp = binance.fapiPrivate_post_leverage({
-    'symbol': m['id'],
-    'leverage': leverage
-})
 
 nest_asyncio.apply()
 
@@ -76,7 +70,7 @@ async def hour():
     
     data_1h_df=pd.read_csv('/root/trading/trading/data/temp_future.csv').reset_index(drop=True)
     data=data.reset_index(drop=True)
-    total=pd.concat([data, data_1h_df[1:]], ignore_index=True)
+    total=pd.concat([data[:-1], data_1h_df], ignore_index=True)
 
     d=total[len(data)-34:len(data)].reset_index(drop=True)
     trend=trend_utils.trend(d)
