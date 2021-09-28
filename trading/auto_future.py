@@ -48,7 +48,7 @@ binance=ccxt.binance({
 markets = binance.load_markets()
 symbol = "ETH/USDT"
 m = binance.market(symbol)
-leverage = 10
+leverage = 5
 
 resp = binance.fapiPrivate_post_leverage({
     'symbol': m['id'],
@@ -66,7 +66,7 @@ async def hour():
     f=open('/root/trading/trading/data/log_future.txt', 'a')
     f.write(time.ctime()+' running...\n')
     f.close()
-    since = data['datetime'][len(data)-1]
+    since = data['datetime'][len(data)-2]
     since_timestamp = binance.parse8601(since)
     
     data_1h = ccxt_utils.fetch_ohlcv(BINANCE_SYMBOL, binance, timeframe='1h', start=since, end=None)
@@ -75,14 +75,14 @@ async def hour():
     
     data_1h_df=pd.read_csv('/root/trading/trading/data/temp_future.csv').reset_index(drop=True)
     data=data.reset_index(drop=True)
-    total=pd.concat([data, data_1h_df[1:]], ignore_index=True)
+    total=pd.concat([data[:-2], data_1h_df], ignore_index=True)
 
-    d=total[len(data)-34:len(data)].reset_index(drop=True)
+    d=total[len(data)-10:len(data)].reset_index(drop=True)
     trend=trend_utils.trend(d)
     data=total
     total=total.set_index('datetime',append=False)
     total.to_csv('/root/trading/trading/data/20200101-ETH_future.csv')
-    await asyncio.sleep(600)
+    await asyncio.sleep(300)
     
     
 async def minute():
@@ -91,7 +91,7 @@ async def minute():
     global temp_position
     
     log=[]
-    d=data[len(data)-34:len(data)]
+    d=data[len(data)-10:len(data)]
     try:
         temp_price= binance.fetch_ticker('ETH/USDT')['close']
     except:
@@ -175,16 +175,22 @@ async def main():
     await asyncio.gather(min_loop(), hour_loop())
     
 data=pd.read_csv('/root/trading/trading/data/20200101-ETH_future.csv').reset_index(drop=True)
-trend=trend_utils.trend(data[len(data)-34:len(data)].reset_index(drop=True))
+trend=trend_utils.trend(data[len(data)-10:len(data)].reset_index(drop=True))
 log=pd.read_csv('/root/trading/trading/data/trading_future.csv', delimiter=',')
 temp_position=log['position'][len(log)-1]
 
 loop=asyncio.get_event_loop()
-try:
-    loop.run_until_complete(main())  
-except KeyboardInterrupt:
-    print('end')
-loop.close()
+while True:
+    try:
+        loop.run_until_complete(main())  
+    except KeyboardInterrupt:
+        print('end')
+        loop.close()
+        break
+    else:
+        print('error!')
+        loop.close()
+        continue
 
 f=open('/root/trading/trading/data/log_future.txt', 'a')
 f.write(time.ctime()+' end\n')
