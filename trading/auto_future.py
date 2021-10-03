@@ -77,7 +77,7 @@ async def hour():
     data=data.reset_index(drop=True)
     total=pd.concat([data[:-2], data_1h_df], ignore_index=True)
 
-    d=total[len(data)-10:len(data)].reset_index(drop=True)
+    d=total[len(data)-20:len(data)].reset_index(drop=True)
     trend=trend_utils.trend(d)
     data=total
     total=total.set_index('datetime',append=False)
@@ -91,7 +91,7 @@ async def minute():
     global temp_position
     
     log=[]
-    d=data[len(data)-10:len(data)]
+    d=data[len(data)-20:len(data)]
     try:
         temp_price= binance.fetch_ticker('ETH/USDT')['close']
     except:
@@ -110,7 +110,7 @@ async def minute():
             temp_position='buy'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
             record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")    
-        except ccxt.base.errors.InsufficientFunds:
+        except:
             print('insufficient margin')
     elif position == 'sell' and temp_position=='none':
         try:
@@ -119,7 +119,7 @@ async def minute():
             temp_position='sell'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
             record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-        except ccxt.base.errors.InsufficientFunds:
+        except:
             print('insufficient margin')
     elif position == 'buy' and temp_position=='sell':
         try:
@@ -128,7 +128,7 @@ async def minute():
             temp_position='buy'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
             record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-        except ccxt.base.errors.InsufficientFunds:
+        except:
             print('insufficient margin')
     elif position == 'sell' and temp_position=='buy':
         try:    
@@ -137,7 +137,7 @@ async def minute():
             temp_position='sell'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
             record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-        except ccxt.base.errors.InsufficientFunds:
+        except:
             print('insufficient margin')
     elif position == 'none' and temp_position=='sell':
         try:
@@ -147,7 +147,7 @@ async def minute():
             temp_position='none'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
             record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-        except ccxt.base.errors.InsufficientFunds:
+        except:
             print('insufficient margin')
     elif position == 'none' and temp_position=='buy':
         try:
@@ -157,7 +157,7 @@ async def minute():
             temp_position='none'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
             record.to_csv("/root/trading/trading/data/trading_future.csv", mode="a")
-        except ccxt.base.errors.InsufficientFunds:
+        except:
             print('insufficient margin')
     await asyncio.sleep(60)
 
@@ -175,7 +175,7 @@ async def main():
     await asyncio.gather(min_loop(), hour_loop())
     
 data=pd.read_csv('/root/trading/trading/data/20200101-ETH_future.csv').reset_index(drop=True)
-trend=trend_utils.trend(data[len(data)-10:len(data)].reset_index(drop=True))
+trend=trend_utils.trend(data[len(data)-20:len(data)].reset_index(drop=True))
 log=pd.read_csv('/root/trading/trading/data/trading_future.csv', delimiter=',')
 temp_position=log['position'][len(log)-1]
 

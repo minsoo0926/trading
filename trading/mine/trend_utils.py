@@ -6,7 +6,7 @@ import time
 
 class trend:
     def __init__(self, data):
-        end = 10
+        end = 20
         start= 0
         max=local_max(data, start, end)
         min=local_min(data, start, end)
@@ -33,9 +33,9 @@ class trend:
 
 
     def near_trend(self, temp_price):
-        if (0.95)*self.f_min(time.time())<temp_price<(1.01)*self.f_min(time.time()) and self.direction()=='up':
+        if (0.97)*self.f_max(time.time())<temp_price<(1.01)*self.f_max(time.time()) and self.direction()=='up':
             return 'buy'
-        elif (1.05)*self.f_max(time.time())>temp_price>(0.99)*self.f_max(time.time()) and self.direction()=='down':
+        elif (1.03)*self.f_min(time.time())>temp_price>(0.99)*self.f_min(time.time()) and self.direction()=='down':
             return 'sell'
         else : 
             return 'none'   
@@ -50,7 +50,7 @@ class trend:
             d.append([date_utils.str_to_utctimestamp(x), y])
         df=pd.DataFrame(data=d, columns=['datetime', 'close'])
         original_start=df.index[(df['datetime']==max['datetime'][0])].tolist()[0]
-        original_end=df.index[(df['datetime']==max['datetime'][len(max)-1])].tolist()[0]
+        original_end=df.index[(df['datetime']==max['datetime'][len(max)-2])].tolist()[0]
         df=df[original_start:original_end].reset_index(drop=True)
         plt.plot(df['datetime'], df['close'], 'k')
 
