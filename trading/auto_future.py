@@ -61,8 +61,7 @@ async def hour():
     f=open('/root/trading/trading/data/log_future.txt', 'a')
     f.write(time.ctime()+' running...\n')
     f.close()
-    since = data['datetime'][len(data)-1]
-    since_timestamp = binance.parse8601(since)
+    since = data['datetime'][len(data)-2]
     
     data_1h = ccxt_utils.fetch_ohlcv(BINANCE_SYMBOL, binance, timeframe='1h', start=since, end=None)
     data_1h_df = ccxt_utils.ohlcv_to_df(data_1h['data'])
@@ -70,7 +69,7 @@ async def hour():
     
     data_1h_df=pd.read_csv('/root/trading/trading/data/temp_future.csv').reset_index(drop=True)
     data=data.reset_index(drop=True)
-    total=pd.concat([data[:-1], data_1h_df], ignore_index=True)
+    total=pd.concat([data[:-2], data_1h_df], ignore_index=True)
 
     d=total[len(data)-34:len(data)].reset_index(drop=True)
     trend=trend_utils.trend(d)
