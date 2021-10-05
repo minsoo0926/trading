@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import time
 
 class trend:
-    def __init__(self, data):
-        end = 20
+    def __init__(self, data, size):
+        end = size
         start= 0
         max=local_max(data, start, end)
         min=local_min(data, start, end)
@@ -33,9 +33,9 @@ class trend:
 
 
     def near_trend(self, temp_price):
-        if (0.97)*self.f_max(time.time())<temp_price<(1.01)*self.f_max(time.time()) and self.direction()=='up':
+        if (0.97)*self.f_min(time.time())<temp_price<(1.01)*self.f_min(time.time()) and self.direction()=='up':
             return 'buy'
-        elif (1.03)*self.f_min(time.time())>temp_price>(0.99)*self.f_min(time.time()) and self.direction()=='down':
+        elif (1.03)*self.f_max(time.time())>temp_price>(0.99)*self.f_max(time.time()) and self.direction()=='down':
             return 'sell'
         else : 
             return 'none'   

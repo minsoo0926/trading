@@ -46,9 +46,10 @@ binance=ccxt.binance({
 })
 
 markets = binance.load_markets()
-symbol = "ETH/USDT"
+symbol = "BTC/USDT"
 m = binance.market(symbol)
-leverage = 5
+leverage = 20
+size = 20
 
 resp = binance.fapiPrivate_post_leverage({
     'symbol': m['id'],
@@ -57,7 +58,7 @@ resp = binance.fapiPrivate_post_leverage({
 
 nest_asyncio.apply()
 
-BINANCE_SYMBOL = 'ETH/USDT'
+BINANCE_SYMBOL = 'BTC/USDT'
 
 
 async def hour():
@@ -77,11 +78,11 @@ async def hour():
     data=data.reset_index(drop=True)
     total=pd.concat([data[:-2], data_1h_df], ignore_index=True)
 
-    d=total[len(data)-20:len(data)].reset_index(drop=True)
-    trend=trend_utils.trend(d)
+    d=total[len(data)-size:len(data)].reset_index(drop=True)
+    trend=trend_utils.trend(d, size)
     data=total
     total=total.set_index('datetime',append=False)
-    total.to_csv('/root/trading/trading/data/20200101-ETH_future.csv')
+    total.to_csv('/root/trading/trading/data/20200101-binance_futures-1h.csv')
     await asyncio.sleep(300)
     
     
@@ -93,7 +94,7 @@ async def minute():
     log=[]
     d=data[len(data)-20:len(data)]
     try:
-        temp_price= binance.fetch_ticker('ETH/USDT')['close']
+        temp_price= binance.fetch_ticker('BTC/USDT')['close']
     except:
         print(time.ctime()+'error!!!')
         f=open('/root/trading/trading/data/log_future.txt', 'a')
@@ -105,7 +106,7 @@ async def minute():
 
     if position=='buy' and temp_position=='none':
         try:
-            order = binance.create_market_buy_order('ETH/USDT', 5*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
+            order = binance.create_market_buy_order('BTC/USDT', leverage*market.get_USDTbalance_future()/binance.fetch_ticker('BTC/USDT')['high'])
             log.append([time.ctime(), 'buy', '-'])
             temp_position='buy'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
@@ -114,7 +115,7 @@ async def minute():
             print('insufficient margin')
     elif position == 'sell' and temp_position=='none':
         try:
-            order = binance.create_market_sell_order('ETH/USDT', 5*market.get_USDTbalance_future()/binance.fetch_ticker('ETH/USDT')['high'])
+            order = binance.create_market_sell_order('BTC/USDT', leverage*market.get_USDTbalance_future()/binance.fetch_ticker('BTC/USDT')['high'])
             log.append([time.ctime(), 'sell', '-'])
             temp_position='sell'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
@@ -123,7 +124,7 @@ async def minute():
             print('insufficient margin')
     elif position == 'buy' and temp_position=='sell':
         try:
-            order = binance.create_market_buy_order('ETH/USDT', 2*market.get_ETHbalance_future())   
+            order = binance.create_market_buy_order('BTC/USDT', 2*market.get_BTCbalance_future(leverage))   
             log.append([time.ctime(), 'buy', '-'])
             temp_position='buy'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
@@ -132,7 +133,7 @@ async def minute():
             print('insufficient margin')
     elif position == 'sell' and temp_position=='buy':
         try:    
-            order = binance.create_market_sell_order('ETH/USDT', 2*market.get_ETHbalance_future()) 
+            order = binance.create_market_sell_order('BTC/USDT', 2*market.get_BTCbalance_future(leverage)) 
             log.append([time.ctime(), 'sell', '-'])
             temp_position='sell'
             record=pd.DataFrame(log, columns=['datetime','position','amount'])
@@ -141,7 +142,7 @@ async def minute():
             print('insufficient margin')
     elif position == 'none' and temp_position=='sell':
         try:
-            order = binance.create_market_buy_order('ETH/USDT', market.get_ETHbalance_future())
+            order = binance.create_market_buy_order('BTC/USDT', market.get_BTCbalance_future(leverage))
             
             log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
             temp_position='none'
@@ -151,7 +152,7 @@ async def minute():
             print('insufficient margin')
     elif position == 'none' and temp_position=='buy':
         try:
-            order = binance.create_market_sell_order('ETH/USDT', market.get_ETHbalance_future())
+            order = binance.create_market_sell_order('BTC/USDT', market.get_BTCbalance_future(leverage))
             
             log.append([time.ctime(), 'none', market.get_USDTbalance_future()])
             temp_position='none'
@@ -174,8 +175,8 @@ async def main():
     global temp_position
     await asyncio.gather(min_loop(), hour_loop())
     
-data=pd.read_csv('/root/trading/trading/data/20200101-ETH_future.csv').reset_index(drop=True)
-trend=trend_utils.trend(data[len(data)-20:len(data)].reset_index(drop=True))
+data=pd.read_csv('/root/trading/trading/data/20200101-binance_futures-1h.csv').reset_index(drop=True)
+trend=trend_utils.trend(data[len(data)-size:len(data)].reset_index(drop=True), size)
 log=pd.read_csv('/root/trading/trading/data/trading_future.csv', delimiter=',')
 temp_position=log['position'][len(log)-1]
 

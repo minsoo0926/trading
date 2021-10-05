@@ -736,3 +736,85 @@
 0,Sun Oct  3 17:08:03 2021,buy,-
 ,datetime,position,amount
 0,Sun Oct  3 19:09:26 2021,none,1177.50072152
+,datetime,position,amount
+0,Sun Oct  3 23:20:28 2021,sell,-
+,datetime,position,amount
+0,Mon Oct  4 00:09:43 2021,none,1194.21311711
+,datetime,position,amount
+0,Mon Oct  4 00:30:04 2021,sell,-
+,datetime,position,amount
+0,Mon Oct  4 01:10:18 2021,none,1193.14249348
+,datetime,position,amount
+0,Mon Oct  4 02:55:47 2021,buy,-
+,datetime,position,amount
+0,Mon Oct  4 06:07:12 2021,none,1096.0050688
+,datetime,position,amount
+0,Mon Oct  4 06:10:33 2021,buy,-
+,datetime,position,amount
+0,Mon Oct  4 09:46:01 2021,none,1060.66912185
+,datetime,position,amount
+0,Mon Oct  4 10:05:33 2021,sell,-
+,datetime,position,amount
+0,Mon Oct  4 17:04:22 2021,none,1029.26246613
+,datetime,position,amount
+0,Mon Oct  4 17:05:52 2021,sell,-
+,datetime,position,amount
+0,Mon Oct  4 23:47:20 2021,none,1103.50441289
+,datetime,position,amount
+0,Mon Oct  4 23:48:40 2021,sell,-
+,datetime,position,amount
+0,Mon Oct  4 23:55:51 2021,none,1133.32272427
+,datetime,position,amount
+0,Tue Oct  5 00:06:12 2021,sell,-
+,datetime,position,amount
+0,Tue Oct  5 01:45:30 2021,none,1024.69913332
+,datetime,position,amount
+0,Tue Oct  5 01:49:51 2021,sell,-
+,datetime,position,amount
+0,Tue Oct  5 02:05:02 2021,none,1048.42044649
+,datetime,position,amount
+0,Tue Oct  5 02:06:22 2021,sell,-
+,datetime,position,amount
+0,Tue Oct  5 02:26:55 2021,none,1009.37936608
+,datetime,position,amount
+0,Tue Oct  5 05:31:30 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 05:35:40 2021,none,1007.0482661
+,datetime,position,amount
+0,Tue Oct  5 05:36:32 2021,none,1002.2740561
+,datetime,position,amount
+0,Tue Oct  5 05:40:01 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 05:41:11 2021,none,997.05316058
+,datetime,position,amount
+0,Tue Oct  5 05:42:31 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 05:43:41 2021,none,1003.50274328
+,datetime,position,amount
+0,Tue Oct  5 05:50:02 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 05:51:12 2021,none,993.25790106
+,datetime,position,amount
+0,Tue Oct  5 05:52:32 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 05:54:43 2021,none,1000.06976749
+,datetime,position,amount
+0,Tue Oct  5 05:59:03 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 06:01:14 2021,none,999.71680455
+,datetime,position,amount
+0,Tue Oct  5 06:05:44 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 06:41:57 2021,none,934.99702149
+,datetime,position,amount
+0,Tue Oct  5 06:45:17 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 06:46:28 2021,none,915.20488158
+,datetime,position,amount
+0,Tue Oct  5 06:47:48 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 06:51:58 2021,none,963.37632447
+,datetime,position,amount
+0,Tue Oct  5 07:06:20 2021,buy,-
+,datetime,position,amount
+0,Tue Oct  5 07:07:59 2021,buy,-

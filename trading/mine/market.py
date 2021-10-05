@@ -45,23 +45,6 @@ def get_ETHbalance():
     balance=binance.fetch_balance()
     return (balance['ETH']['free'])
 
-def get_BTCbalance_future():
-    #잔고보기
-    binance=ccxt.binance({
-        'apiKey' : 'BpLnIGqKodX0EXAxuR14cpbYax4T6Z1KvrQ8Xbevk3PdmcMjO3J06UK9g6IDS1eG',
-        'secret' : '90uKFUV4b0HBjOLtmQmSsHdv9rrYGcZlufEwfrnryAfHzT2BB3Xck5ufsfQXnfW9',
-        'options' : {
-            'defaultType': 'future',
-            'adjustForTimeDifference': True
-        }
-    })
-    balance=binance.fetch_balance()
-    try: 
-        amount=balance['BTC']['free']
-    except KeyError:
-        amount=0
-    return amount
-    
     
 def get_USDTbalance_future():
     #잔고보기
@@ -76,7 +59,7 @@ def get_USDTbalance_future():
     balance=binance.fetch_balance()
     return (balance['USDT']['free'])
 
-def get_ETHbalance_future():
+def get_ETHbalance_future(leverage):
     #잔고보기
     binance=ccxt.binance({
         'apiKey' : 'BpLnIGqKodX0EXAxuR14cpbYax4T6Z1KvrQ8Xbevk3PdmcMjO3J06UK9g6IDS1eG',
@@ -87,5 +70,19 @@ def get_ETHbalance_future():
         }
     })
     balance=binance.fetch_balance()
-    amount=5*balance['USDT']['used']/binance.fetch_ticker('ETH/USDT')['close']
+    amount=leverage*balance['USDT']['used']/binance.fetch_ticker('ETH/USDT')['close']
+    return amount
+
+def get_BTCbalance_future(leverage):
+    #잔고보기
+    binance=ccxt.binance({
+        'apiKey' : 'BpLnIGqKodX0EXAxuR14cpbYax4T6Z1KvrQ8Xbevk3PdmcMjO3J06UK9g6IDS1eG',
+        'secret' : '90uKFUV4b0HBjOLtmQmSsHdv9rrYGcZlufEwfrnryAfHzT2BB3Xck5ufsfQXnfW9',
+        'options' : {
+            'defaultType': 'future',
+            'adjustForTimeDifference': True
+        }
+    })
+    balance=binance.fetch_balance()
+    amount=leverage*balance['USDT']['used']/binance.fetch_ticker('BTC/USDT')['close']
     return amount
